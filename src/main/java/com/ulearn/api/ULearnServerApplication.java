@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @SpringBootApplication
 @RequestMapping("/api")
-@CrossOrigin(origins = { "http://localhost:3003", "http://ulearn-uml.herokuapp.com" })
+@CrossOrigin(origins = { "http://localhost:3003", "https://ulearn-uml.herokuapp.com" })
 public class ULearnServerApplication {
 	
 	@Autowired
