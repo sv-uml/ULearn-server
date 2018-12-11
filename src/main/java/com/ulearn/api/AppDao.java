@@ -29,7 +29,7 @@ public class AppDao {
 	public Map<String, Object> getUserByEmail(String email) {
 		Map<String, Object> ret = new HashMap<>();
 		Map<String, Object> params = new HashMap<>();
-		params.put("email", email);
+		params.put(AppConstants.REQUEST_KEY_EMAIL, email);
 		List<Map<String, Object>> lst = namedParameterJdbcTemplate.queryForList("SELECT id, name, password FROM users where email = :email", params);
 		if (lst.isEmpty()) {
 			return ret;
@@ -45,7 +45,7 @@ public class AppDao {
 	 */
 	public boolean userExists(String email) {
 		Map<String, Object> params = new HashMap<>();
-		params.put("email", email);
+		params.put(AppConstants.REQUEST_KEY_EMAIL, email);
 		List<Map<String, Object>> lst = namedParameterJdbcTemplate.queryForList("SELECT id FROM users where email = :email", params);
 		return (!lst.isEmpty());
 	}
@@ -61,8 +61,8 @@ public class AppDao {
 		KeyHolder holder = new GeneratedKeyHolder();
 		Map<String, Object> params = new HashMap<>();
 		params.put("name", name);
-		params.put("email", email);
-		params.put("password", password);
+		params.put(AppConstants.REQUEST_KEY_EMAIL, email);
+		params.put(AppConstants.REQUEST_KEY_PASS, password);
 		
 		namedParameterJdbcTemplate.getJdbcOperations().update(new PreparedStatementCreator() {
 			@Override
@@ -75,6 +75,29 @@ public class AppDao {
 			}
 		}, holder);
 		return Integer.parseInt(String.valueOf(holder.getKeys().get("id")));
+	}
+	
+	public int createCourse(String title, String description, int author, int startDate, int endDate) {
+		KeyHolder holder = new GeneratedKeyHolder();
+		namedParameterJdbcTemplate.getJdbcOperations().update(new PreparedStatementCreator() {
+			@Override
+			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+				PreparedStatement pst = con.prepareStatement("INSERT INTO courses (title, description, author, datetime, start_date, end_date) VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+				pst.setString(1, title);
+				pst.setString(2, description);
+				pst.setInt(3, author);
+				pst.setInt(4, Integer.parseInt(String.valueOf(System.currentTimeMillis() / 1000)));
+				pst.setInt(5, startDate);
+				pst.setInt(6, endDate);
+				return pst;
+			}
+		}, holder);
+		return Integer.parseInt(String.valueOf(holder.getKeys().get("id")));
+	}
+	
+	public List<Map<String, Object>> getAllCourses() {
+		Map<String, Object> params = new HashMap<>();
+		return namedParameterJdbcTemplate.queryForList("SELECT * FROM courses", params);
 	}
 	
 }
