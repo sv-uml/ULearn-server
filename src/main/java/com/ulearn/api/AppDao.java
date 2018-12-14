@@ -74,7 +74,7 @@ public class AppDao {
 				return pst;
 			}
 		}, holder);
-		return Integer.parseInt(String.valueOf(holder.getKeys().get("id")));
+		return Integer.parseInt(String.valueOf(holder.getKeys().get("last_insert_rowid()")));
 	}
 	
 	public int createCourse(String title, String description, int author, int startDate, int endDate) {
